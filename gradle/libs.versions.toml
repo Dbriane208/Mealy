@@ -18,15 +18,10 @@ kotlinx-coroutines = "1.8.1"
 
 ktor = "2.3.12"
 moko-mvvm = "0.16.1"
-
 kamel = "0.9.5"
 
+napier = "2.7.1"
 voyager = "1.1.0-beta02"
-
-koin = "3.6.0-alpha3"
-koinComposeMultiplatform = "1.2.0-alpha3"
-navigationCompose = "2.8.0-alpha02"
-lifecycleViewModel = "2.8.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -55,6 +50,7 @@ moko-mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "m
 
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel" }
 
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
@@ -65,6 +61,7 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [bundles]
 ktor = [
