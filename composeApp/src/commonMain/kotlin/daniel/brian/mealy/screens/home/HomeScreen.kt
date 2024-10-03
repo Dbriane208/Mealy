@@ -15,13 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import daniel.brian.mealy.components.CardComponent
+import daniel.brian.mealy.components.CategoriesCard
+import daniel.brian.mealy.components.PopularCard
+import daniel.brian.mealy.components.RandomCard
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 
@@ -50,20 +53,27 @@ object HomeScreen : Tab {
 
         LaunchedEffect(homeViewModel){
             homeViewModel.getAllCategories()
+            homeViewModel.getRandomMeal()
+            homeViewModel.getNonAlcoholicDrinks()
         }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            Column {
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth(0.6f)
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         Text(
                             text = "Hello, Daniel",
@@ -71,7 +81,7 @@ object HomeScreen : Tab {
                         )
 
                         Text(
-                            text = "What would you like to cook today?",
+                            text = "What would you like to cook or drink today?",
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp
                         )
@@ -111,12 +121,70 @@ object HomeScreen : Tab {
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(homeScreenState.categories) { category ->
-                            CardComponent(
+                            CategoriesCard(
                                 category = category
                             )
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Column {
+                        Text(
+                            text = "Recommendation",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        AnimatedVisibility(visible = homeScreenState.meals.isNotEmpty()){
+                            Row {
+                                RandomCard(
+                                    meal = homeScreenState.meals[0]
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Ordinary Drinks",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        AnimatedVisibility(visible = homeScreenState.drinks.isNotEmpty()){
+                           LazyRow (
+                               horizontalArrangement = Arrangement.spacedBy(8.dp)
+                           ){
+                               items(homeScreenState.drinks){ drink ->
+                                   PopularCard(
+                                       drink = drink
+                                   )
+                               }
+                           }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
 
                 AnimatedVisibility(visible = homeScreenState.isLoading){
                     Column(
@@ -127,8 +195,6 @@ object HomeScreen : Tab {
                         CircularProgressIndicator()
                     }
                 }
-
-
 
             }
         }

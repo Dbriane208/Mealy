@@ -16,6 +16,6 @@ data class Category(
 )
 
 @Serializable
-data class CategoryResponse(
+data class CategoryListResponse(
     val categories: List<Category>
 )
