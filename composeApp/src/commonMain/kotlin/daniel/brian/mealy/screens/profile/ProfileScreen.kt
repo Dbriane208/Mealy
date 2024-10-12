@@ -6,6 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,7 +30,7 @@ object ProfileScreen : Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val icon = rememberVectorPainter(Icons.Default.Person)
+            val icon = rememberVectorPainter(Icons.Rounded.Person)
 
             return remember {
                 TabOptions(

@@ -6,6 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,7 +31,7 @@ object SearchScreen : Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val icon = rememberVectorPainter(Icons.Default.Search)
+            val icon = rememberVectorPainter(Icons.Rounded.Search)
             return remember {
                 TabOptions(
                     index = 1u,

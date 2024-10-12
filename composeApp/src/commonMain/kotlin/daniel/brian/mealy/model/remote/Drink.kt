@@ -1,4 +1,4 @@
-package daniel.brian.mealy.model
+package daniel.brian.mealy.model.remote
 
 import kotlinx.serialization.Serializable
 

@@ -1,8 +1,8 @@
 package daniel.brian.mealy.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import daniel.brian.mealy.model.Category
-import daniel.brian.mealy.model.Drink
-import daniel.brian.mealy.model.Meal
+import daniel.brian.mealy.model.remote.Category
+import daniel.brian.mealy.model.remote.Drink
+import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.utils.shortenName
 import daniel.brian.mealy.utils.shortenNameLength
 import io.kamel.image.KamelImage
@@ -66,11 +65,13 @@ fun CategoriesCard(
 @Composable
 fun RandomCard(
     modifier: Modifier = Modifier,
-    meal: Meal
+    meal: Meal,
+    onClick: (Int) -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth()
-            .height(200.dp),
+            .height(200.dp)
+            .clickable { meal.idMeal?.toIntOrNull()?.let { onClick(it)}},
         elevation = 10.dp,
         shape = RoundedCornerShape(10.dp)
     ){

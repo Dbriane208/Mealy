@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import mealy.composeapp.generated.resources.Res
 
 class HomeViewModel: ViewModel() {
     private val homeRepository = HomeRepository()
@@ -18,20 +19,30 @@ class HomeViewModel: ViewModel() {
     fun getAllCategories() {
         viewModelScope.launch {
             when(val categories = homeRepository.getCategories()){
+                is NetworkResult.Loading -> {
+                    _homeUiState.update {
+                        it.copy(
+                            isCategoriesLoading = true,
+                            error = false
+                        )
+                    }
+                }
+
                 is NetworkResult.Error -> {
                     _homeUiState.update {
                         it.copy(
                             errorMessage = categories.message.toString(),
-                            isLoading = false,
+                            isCategoriesLoading = false,
                             error = true
                         )
                     }
                 }
+
                 is NetworkResult.Success -> {
                     _homeUiState.update {
                         it.copy(
                             categories = categories.data ?: emptyList(),
-                            isLoading = false,
+                            isCategoriesLoading = false,
                             error = false
                         )
                     }
@@ -43,20 +54,30 @@ class HomeViewModel: ViewModel() {
     fun getRandomMeal() {
         viewModelScope.launch {
             when(val randomMeal = homeRepository.getRandomMeal()){
+                is NetworkResult.Loading -> {
+                    _homeUiState.update {
+                        it.copy(
+                            isRandomLoading = true,
+                            error = false
+                        )
+                    }
+                }
+
                 is NetworkResult.Error -> {
                     _homeUiState.update {
                         it.copy(
                             errorMessage = randomMeal.message.toString(),
-                            isLoading = false,
+                            isRandomLoading = false,
                             error = true
                         )
                     }
                 }
+
                 is NetworkResult.Success -> {
                     _homeUiState.update {
                         it.copy(
                             meals = randomMeal.data ?: emptyList(),
-                            isLoading = false,
+                            isRandomLoading = false,
                             error = false
                         )
                     }
@@ -68,20 +89,30 @@ class HomeViewModel: ViewModel() {
     fun getNonAlcoholicDrinks() {
         viewModelScope.launch {
             when(val drink = homeRepository.getNonAlcoholicDrinks()){
+                is NetworkResult.Loading -> {
+                    _homeUiState.update {
+                        it.copy(
+                            isDrinksLoading = true,
+                            error = false
+                        )
+                    }
+                }
+
                 is NetworkResult.Error -> {
                     _homeUiState.update {
                         it.copy(
                             errorMessage = drink.message.toString(),
-                            isLoading = false,
+                            isDrinksLoading = false,
                             error = true
                         )
                     }
                 }
+
                 is NetworkResult.Success -> {
                     _homeUiState.update {
                         it.copy (
                             drinks = drink.data ?: emptyList(),
-                            isLoading = false,
+                            isDrinksLoading = false,
                             error = false
                         )
                     }

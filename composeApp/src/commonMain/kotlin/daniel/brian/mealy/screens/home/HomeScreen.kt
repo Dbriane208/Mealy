@@ -1,6 +1,8 @@
 package daniel.brian.mealy.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,11 +40,13 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import daniel.brian.mealy.components.CategoriesCard
 import daniel.brian.mealy.components.PopularCard
 import daniel.brian.mealy.components.RandomCard
+import daniel.brian.mealy.screens.details.DetailsScreen
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 
@@ -57,6 +62,7 @@ object HomeScreen : Tab {
             homeViewModel.getNonAlcoholicDrinks()
         }
 
+        val navigator = LocalNavigator.current
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -116,6 +122,20 @@ object HomeScreen : Tab {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                AnimatedVisibility(
+                    visible = homeScreenState.isCategoriesLoading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){
+                    Column(
+                        modifier = Modifier.size(100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
                 AnimatedVisibility(visible = homeScreenState.categories.isNotEmpty()){
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -144,17 +164,35 @@ object HomeScreen : Tab {
 
                         Spacer(modifier = Modifier.height(10.dp))
 
+                        AnimatedVisibility(
+                            visible = homeScreenState.isRandomLoading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ){
+                            Column(
+                                modifier = Modifier.size(100.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
                         AnimatedVisibility(visible = homeScreenState.meals.isNotEmpty()){
                             Row {
                                 RandomCard(
-                                    meal = homeScreenState.meals[0]
+                                    meal = homeScreenState.meals[0],
+                                    onClick = {mealId ->
+                                        navigator?.push(DetailsScreen(mealId = mealId))
+                                    }
                                 )
                             }
                         }
+
                     }
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(25.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -170,6 +208,20 @@ object HomeScreen : Tab {
 
                         Spacer(modifier = Modifier.height(10.dp))
 
+                        AnimatedVisibility(
+                            visible = homeScreenState.isDrinksLoading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ){
+                            Column(
+                                modifier = Modifier.size(100.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
                         AnimatedVisibility(visible = homeScreenState.drinks.isNotEmpty()){
                            LazyRow (
                                horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -181,20 +233,11 @@ object HomeScreen : Tab {
                                }
                            }
                         }
+
                     }
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-
-                AnimatedVisibility(visible = homeScreenState.isLoading){
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
 
             }
         }
@@ -203,7 +246,7 @@ object HomeScreen : Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val icon = rememberVectorPainter(Icons.Default.Home)
+            val icon = rememberVectorPainter(Icons.Rounded.Home)
 
             return remember {
                 TabOptions(
@@ -213,5 +256,4 @@ object HomeScreen : Tab {
                 )
             }
         }
-
 }

@@ -1,4 +1,4 @@
-package daniel.brian.mealy.model
+package daniel.brian.mealy.model.remote
 
 import kotlinx.serialization.Serializable
 
@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class Meal(
     val idMeal: String?,
     val strMeal: String?,
-    val strDrinkAlternate: String?,
     val strCategory: String?,
     val strArea: String?,
     val strInstructions: String?,

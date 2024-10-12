@@ -1,11 +1,11 @@
 package daniel.brian.mealy.repository
 
-import daniel.brian.mealy.model.Category
-import daniel.brian.mealy.model.CategoryListResponse
-import daniel.brian.mealy.model.Drink
-import daniel.brian.mealy.model.DrinkList
-import daniel.brian.mealy.model.Meal
-import daniel.brian.mealy.model.MealListResponse
+import daniel.brian.mealy.model.remote.Category
+import daniel.brian.mealy.model.remote.CategoryListResponse
+import daniel.brian.mealy.model.remote.Drink
+import daniel.brian.mealy.model.remote.DrinkList
+import daniel.brian.mealy.model.remote.Meal
+import daniel.brian.mealy.model.remote.MealListResponse
 import daniel.brian.mealy.network.KtorClient
 import daniel.brian.mealy.utils.NetworkResult
 import io.github.aakira.napier.Napier

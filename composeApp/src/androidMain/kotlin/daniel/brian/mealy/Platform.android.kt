@@ -1,5 +1,7 @@
 package daniel.brian.mealy
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 
 class AndroidPlatform : Platform {
