@@ -1,30 +1,23 @@
 package daniel.brian.mealy
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationDefaults
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
 import daniel.brian.mealy.screens.bookmark.BookmarkScreen
-import daniel.brian.mealy.screens.details.DetailsScreen
+import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
+import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.screens.home.HomeScreen
 import daniel.brian.mealy.screens.profile.ProfileScreen
 import daniel.brian.mealy.screens.search.SearchScreen
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun App() {
@@ -77,6 +70,7 @@ fun CurrentScreen(navigator: Navigator) {
     when (val currentScreen = navigator.lastItem) {
         is MainScreen -> currentScreen.currentTab.Content()
         is DetailsScreen -> DetailsScreen(currentScreen.mealId).Content()
+        is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId).Content()
         // Add other screens here if needed
     }
 }

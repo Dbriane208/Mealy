@@ -1,4 +1,4 @@
-package daniel.brian.mealy.screens.details
+package daniel.brian.mealy.screens.details.meal
 
 import daniel.brian.mealy.model.remote.Meal
 

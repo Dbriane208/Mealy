@@ -1,4 +1,4 @@
-package daniel.brian.mealy.screens.details
+package daniel.brian.mealy.screens.details.meal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -17,15 +18,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Star
@@ -44,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.IconTextPair
+import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
@@ -84,15 +83,24 @@ data class DetailsScreen(
                         modifier = Modifier.fillMaxWidth()
                             .fillMaxHeight(0.25f)
                     ){
+                        KamelImage(
+                            resource = asyncPainterResource(meal.strMealThumb ?: "No Image"),
+                            contentDescription = "Meal Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
                         Row(
                             modifier = Modifier.fillMaxWidth()
+                                .align(alignment = Alignment.TopStart)
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
                                     .background(Color.White)
                                     .size(30.dp)
-                                    .weight(1f)
                             ) {
                                 IconButton(
                                     modifier = Modifier,
@@ -106,6 +114,7 @@ data class DetailsScreen(
                                     )
                                 }
                             }
+
 
                             Box(
                                 modifier = Modifier
@@ -126,13 +135,6 @@ data class DetailsScreen(
                             }
 
                         }
-
-                        KamelImage(
-                            resource = asyncPainterResource(meal.strMealThumb ?: "No Image"),
-                            contentDescription = "Meal Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
 
                     Box(
@@ -141,7 +143,7 @@ data class DetailsScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            elevation = 10.dp,
+                            elevation = 20.dp,
                             shape = RoundedCornerShape(
                                 topStart = 16.dp,
                                 topEnd = 16.dp,
@@ -149,7 +151,9 @@ data class DetailsScreen(
                                 bottomEnd = 0.dp
                             )
                         ){
-                            Column {
+                            Column(
+                                modifier = Modifier.padding(10.dp)
+                            ) {
 
                                 Column(
                                     modifier = Modifier,
@@ -179,26 +183,14 @@ data class DetailsScreen(
                                         IconTextPair(
                                             icon = Icons.Outlined.Info,
                                             contentDescription = "Info null",
-                                            text = "Info"
+                                            text = "More Info"
                                         )
                                     }
                                 }
 
                                 Spacer(modifier = Modifier.height(10.dp))
 
-                                Column(
-                                    modifier = Modifier,
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    TitleText(text = "Instructions")
-
-                                    Text(
-                                        text = meal.strInstructions ?: "Instructions null",
-                                        fontSize = 12.sp,
-                                        maxLines = 3,
-                                        softWrap = true
-                                    )
-                                }
+                               NumberedInstructions(meal.strInstructions ?: "Instructions null")
 
                                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -234,22 +226,22 @@ data class DetailsScreen(
             }
 
         }
-        Row(
-            modifier = Modifier
-        ){
-            ExtendedFloatingActionButton(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                onClick = {},
-                icon = { Icon(Icons.Filled.PlayArrow, "Play Arrow") },
-                text = { Text(
-                    text = "Watch Video",
-                    color = Color.White
-                )
-                },
-                elevation = FloatingActionButtonDefaults.elevation(10.dp),
-                backgroundColor = Color(0xFF0C9A61)
-            )
-        }
+//        Row(
+//            modifier = Modifier
+//        ){
+//            ExtendedFloatingActionButton(
+//                modifier = Modifier.align(Alignment.CenterVertically),
+//                onClick = {},
+//                icon = { Icon(Icons.Filled.PlayArrow, "Play Arrow") },
+//                text = { Text(
+//                    text = "Watch Video",
+//                    color = Color.White
+//                )
+//                },
+//                elevation = FloatingActionButtonDefaults.elevation(10.dp),
+//                backgroundColor = Color(0xFF0C9A61)
+//            )
+//        }
     }
 
     data class Ingredient(

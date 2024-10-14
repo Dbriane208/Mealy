@@ -24,7 +24,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
@@ -44,11 +43,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import daniel.brian.mealy.components.CategoriesCard
-import daniel.brian.mealy.components.PopularCard
+import daniel.brian.mealy.components.DrinksCard
 import daniel.brian.mealy.components.RandomCard
-import daniel.brian.mealy.screens.details.DetailsScreen
+import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
+import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
+import io.github.aakira.napier.Napier
 
 object HomeScreen : Tab {
     @Composable
@@ -227,8 +228,11 @@ object HomeScreen : Tab {
                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                            ){
                                items(homeScreenState.drinks){ drink ->
-                                   PopularCard(
-                                       drink = drink
+                                   DrinksCard(
+                                       drink = drink,
+                                       onClick = { drinkId ->
+                                           navigator?.push(DrinkDetailsScreen(drinkId = drinkId))
+                                       }
                                    )
                                }
                            }

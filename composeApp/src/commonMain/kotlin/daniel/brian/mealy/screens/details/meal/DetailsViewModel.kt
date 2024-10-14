@@ -1,4 +1,4 @@
-package daniel.brian.mealy.screens.details
+package daniel.brian.mealy.screens.details.meal
 
 import daniel.brian.mealy.repository.DetailsRepository
 import daniel.brian.mealy.utils.NetworkResult
@@ -35,10 +35,7 @@ class DetailsViewModel: ViewModel() {
 
                 is NetworkResult.Success -> {
                     _detailsUiState.update {
-                        it.copy(
-                            meal = mealDetails.data?.firstOrNull(),
-                            error = false
-                        )
+                        it.copy(meal = mealDetails.data?.firstOrNull())
                     }
                 }
             }

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import daniel.brian.mealy.model.remote.Category
 import daniel.brian.mealy.model.remote.Drink
+import daniel.brian.mealy.model.remote.DrinkDetails
 import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.utils.shortenName
 import daniel.brian.mealy.utils.shortenNameLength
@@ -86,9 +87,10 @@ fun RandomCard(
 }
 
 @Composable
-fun PopularCard(
+fun DrinksCard(
     modifier: Modifier = Modifier,
-    drink: Drink
+    drink: Drink,
+    onClick: (Int) -> Unit
 ) {
    Column(
        modifier = modifier,
@@ -97,7 +99,8 @@ fun PopularCard(
    ) {
        Card(
            modifier = modifier
-               .size(150.dp),
+               .size(150.dp)
+               .clickable { drink.idDrink?.toIntOrNull()?.let { onClick(it) }  },
            elevation = 10.dp,
            shape = RoundedCornerShape(10.dp)
        ){
