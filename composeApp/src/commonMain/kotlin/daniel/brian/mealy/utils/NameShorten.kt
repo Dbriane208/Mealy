@@ -1,9 +1,8 @@
 package daniel.brian.mealy.utils
 
 fun String.shortenName(): String {
-    val mealNameArray = split(" ").filter {
-        it != "and" && it != "&" && it != "(" && it != "-" && it != "the"
-                && it != "A" && it != "a"
+    val mealNameArray = this.replace("(","").split(" ").filter { word ->
+        word.lowercase() !in setOf("and", "&", ")","-", "the", "a")
     }.take(2)
     return mealNameArray.joinToString(" ")
 }

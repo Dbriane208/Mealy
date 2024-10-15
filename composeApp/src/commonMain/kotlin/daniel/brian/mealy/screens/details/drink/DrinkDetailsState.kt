@@ -1,6 +1,5 @@
 package daniel.brian.mealy.screens.details.drink
 
-import daniel.brian.mealy.model.remote.Drink
 import daniel.brian.mealy.model.remote.DrinkDetails
 
 data class DrinkDetailsState(

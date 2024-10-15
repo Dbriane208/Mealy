@@ -13,6 +13,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import daniel.brian.mealy.screens.bookmark.BookmarkScreen
+import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.screens.home.HomeScreen
@@ -71,6 +72,7 @@ fun CurrentScreen(navigator: Navigator) {
         is MainScreen -> currentScreen.currentTab.Content()
         is DetailsScreen -> DetailsScreen(currentScreen.mealId).Content()
         is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId).Content()
+        is CategoryScreen -> CategoryScreen(currentScreen.categoryName).Content()
         // Add other screens here if needed
     }
 }

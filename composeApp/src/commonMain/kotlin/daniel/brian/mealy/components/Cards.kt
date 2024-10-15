@@ -18,8 +18,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import daniel.brian.mealy.model.remote.Category
+import daniel.brian.mealy.model.remote.CategoryDetails
 import daniel.brian.mealy.model.remote.Drink
-import daniel.brian.mealy.model.remote.DrinkDetails
 import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.utils.shortenName
 import daniel.brian.mealy.utils.shortenNameLength
@@ -30,10 +30,12 @@ import io.kamel.image.asyncPainterResource
 fun CategoriesCard(
     modifier: Modifier = Modifier,
     category: Category,
+    onClick: (String) -> Unit
 ){
     Card(
         modifier = modifier
-            .size(100.dp),
+            .size(100.dp)
+            .clickable { onClick(category.categoryName) },
         elevation = 10.dp,
         shape = RoundedCornerShape(10.dp)
     ){

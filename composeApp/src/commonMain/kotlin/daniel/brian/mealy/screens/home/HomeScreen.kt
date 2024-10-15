@@ -45,11 +45,11 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import daniel.brian.mealy.components.CategoriesCard
 import daniel.brian.mealy.components.DrinksCard
 import daniel.brian.mealy.components.RandomCard
+import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
-import io.github.aakira.napier.Napier
 
 object HomeScreen : Tab {
     @Composable
@@ -59,11 +59,14 @@ object HomeScreen : Tab {
 
         LaunchedEffect(homeViewModel){
             homeViewModel.getAllCategories()
-            homeViewModel.getRandomMeal()
             homeViewModel.getNonAlcoholicDrinks()
+            if(homeScreenState.meals.isEmpty()){
+                homeViewModel.getRandomMeal()
+            }
         }
 
         val navigator = LocalNavigator.current
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -143,7 +146,10 @@ object HomeScreen : Tab {
                     ) {
                         items(homeScreenState.categories) { category ->
                             CategoriesCard(
-                                category = category
+                                category = category,
+                                onClick = {categoryName ->
+                                    navigator?.push(CategoryScreen(categoryName))
+                                }
                             )
                         }
                     }

@@ -1,5 +1,6 @@
 package daniel.brian.mealy.screens.home
 
+import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.repository.HomeRepository
 import daniel.brian.mealy.utils.NetworkResult
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mealy.composeapp.generated.resources.Res
 
 class HomeViewModel: ViewModel() {
     private val homeRepository = HomeRepository()
@@ -16,8 +16,14 @@ class HomeViewModel: ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeScreenState())
     val homeUiState: StateFlow<HomeScreenState> = _homeUiState.asStateFlow()
 
+    private var randomSavedState: Meal? = null
+
+    private fun storeRandomMeal(meal: Meal) {
+        randomSavedState = meal
+    }
+
     fun getAllCategories() {
-        viewModelScope.launch {
+       viewModelScope.launch {
             when(val categories = homeRepository.getCategories()){
                 is NetworkResult.Loading -> {
                     _homeUiState.update {
@@ -43,16 +49,32 @@ class HomeViewModel: ViewModel() {
                         it.copy(
                             categories = categories.data ?: emptyList(),
                             isCategoriesLoading = false,
-                            error = false
+                            error = false,
                         )
                     }
                 }
             }
-        }
+       }
     }
 
     fun getRandomMeal() {
         viewModelScope.launch {
+            // checking whether we have stored a random meal
+            randomSavedState?.let { savedMeal ->
+                _homeUiState.update {
+                    it.copy(
+                        meals = listOf(savedMeal)
+                    )
+                }
+                // Exit the coroutine early if we have a saved meal
+                return@launch
+            }
+
+            // If we don't have a stored meal, we fetch one
+            _homeUiState.update {
+                it.copy(isRandomLoading = true)
+            }
+
             when(val randomMeal = homeRepository.getRandomMeal()){
                 is NetworkResult.Loading -> {
                     _homeUiState.update {
@@ -74,12 +96,16 @@ class HomeViewModel: ViewModel() {
                 }
 
                 is NetworkResult.Success -> {
-                    _homeUiState.update {
-                        it.copy(
-                            meals = randomMeal.data ?: emptyList(),
-                            isRandomLoading = false,
-                            error = false
-                        )
+                    randomMeal.data?.firstOrNull()?.let { meal ->
+                        storeRandomMeal(meal = meal)
+
+                        _homeUiState.update {
+                            it.copy(
+                                meals = listOf(meal),
+                                isRandomLoading = false,
+                                error = false
+                            )
+                        }
                     }
                 }
             }
