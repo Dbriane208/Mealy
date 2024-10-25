@@ -1,12 +1,15 @@
 package daniel.brian.mealy
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -23,41 +26,61 @@ import daniel.brian.mealy.screens.search.SearchScreen
 @Composable
 fun App() {
     MaterialTheme {
-
         Navigator(MainScreen) { navigator ->
             Scaffold(
                 bottomBar = {
-                    if(navigator.lastItem is MainScreen){
+                    // showing navigation bar only on main screens
+                    val tabScreens = setOf(MainScreen,BookmarkScreen,SearchScreen,ProfileScreen)
+
+                    if (navigator.lastItem in tabScreens) {
                         BottomNavigation(
                             backgroundColor = Color.White,
                             contentColor = Color.White,
                             elevation = 10.dp
                         ) {
-                            TabNavigationItem(HomeScreen,navigator)
-                            TabNavigationItem(BookmarkScreen,navigator)
-                            TabNavigationItem(SearchScreen,navigator)
-                            TabNavigationItem(ProfileScreen,navigator)
+                            TabNavigationItem(HomeScreen, navigator)
+                            TabNavigationItem(BookmarkScreen, navigator)
+                            TabNavigationItem(SearchScreen, navigator)
+                            TabNavigationItem(ProfileScreen, navigator)
                         }
                     }
                 }
-            ) {
-                CurrentScreen(navigator)
+            ) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)){
+                    CurrentScreen(navigator)
+                }
             }
         }
     }
 }
 
+
 @Composable
 fun RowScope.TabNavigationItem(tab: Tab, navigator: Navigator) {
     val currentScreen = navigator.lastItem as? MainScreen
-    val selected = currentScreen?.currentTab == tab
+    val selected = when (navigator.lastItem) {
+        is MainScreen -> currentScreen?.currentTab == tab
+        is ProfileScreen -> tab is ProfileScreen
+        is BookmarkScreen -> tab is BookmarkScreen
+        is SearchScreen -> tab is SearchScreen
+        is HomeScreen -> tab is HomeScreen
+        else -> navigator.lastItem == tab
+    }
 
     BottomNavigationItem(
         selected = selected,
         onClick = {
-            if(currentScreen != null) {
-                currentScreen.currentTab = tab
-                navigator.replace(MainScreen)
+            when (tab) {
+                is ProfileScreen -> navigator.push(ProfileScreen)
+                is BookmarkScreen -> navigator.push(BookmarkScreen)
+                is SearchScreen -> navigator.push(SearchScreen)
+                is HomeScreen -> navigator.push(MainScreen)
+                else -> {
+                    if (currentScreen != null) {
+                        currentScreen.currentTab = tab
+                        navigator.replace(MainScreen)
+                    }
+                }
             }
         },
         icon = { tab.options.icon?.let { Icon(painter = it, contentDescription = null) } },
@@ -73,7 +96,9 @@ fun CurrentScreen(navigator: Navigator) {
         is DetailsScreen -> DetailsScreen(currentScreen.mealId).Content()
         is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId).Content()
         is CategoryScreen -> CategoryScreen(currentScreen.categoryName).Content()
-        // Add other screens here if needed
+        is ProfileScreen -> ProfileScreen.Content()
+        is BookmarkScreen -> BookmarkScreen.Content()
+        is SearchScreen -> SearchScreen.Content()
     }
 }
 
@@ -84,5 +109,4 @@ object MainScreen : Screen {
     override fun Content() {
         currentTab.Content()
     }
-
 }
