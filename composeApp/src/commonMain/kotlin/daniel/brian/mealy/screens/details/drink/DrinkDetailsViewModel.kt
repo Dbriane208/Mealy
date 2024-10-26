@@ -17,12 +17,17 @@ class DrinkDetailsViewModel: ViewModel() {
 
     fun getDrinks(drinkId: Int) {
         viewModelScope.launch {
+            _drinksUiState.update {
+                it.copy(isLoading = true)
+            }
+
             when(val drinkDetails = detailsRepository.getDrinkDetails(drinkId)){
                 is NetworkResult.Error -> {
                     _drinksUiState.update {
                         it.copy(
                             error = true,
-                            errorMessage = drinkDetails.message.toString()
+                            errorMessage = drinkDetails.message.toString(),
+                            isLoading = false
                         )
                     }
                 }
@@ -35,7 +40,10 @@ class DrinkDetailsViewModel: ViewModel() {
 
                 is NetworkResult.Success -> {
                     _drinksUiState.update {
-                        it.copy(drink = drinkDetails.data?.firstOrNull())
+                        it.copy(
+                            drink = drinkDetails.data?.firstOrNull(),
+                            isLoading = false
+                        )
                     }
                 }
             }

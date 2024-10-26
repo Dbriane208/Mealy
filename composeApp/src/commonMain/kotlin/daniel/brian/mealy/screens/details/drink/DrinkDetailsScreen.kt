@@ -55,10 +55,10 @@ data class DrinkDetailsScreen(
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        val drinkDetailsViewModel = getViewModel(Unit, viewModelFactory { DrinkDetailsViewModel() })
+        val drinkDetailsViewModel = getViewModel(key = drinkId, viewModelFactory { DrinkDetailsViewModel() })
         val drinkDetailsState by drinkDetailsViewModel.drinkUiState.collectAsState()
 
-        LaunchedEffect(drinkDetailsViewModel){
+        LaunchedEffect(drinkId){
             drinkDetailsViewModel.getDrinks(drinkId)
         }
 

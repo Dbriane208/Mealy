@@ -24,6 +24,10 @@ class HomeViewModel: ViewModel() {
 
     fun getAllCategories() {
        viewModelScope.launch {
+           _homeUiState.update {
+               it.copy(isCategoriesLoading = true)
+           }
+
             when(val categories = homeRepository.getCategories()){
                 is NetworkResult.Loading -> {
                     _homeUiState.update {
@@ -114,6 +118,10 @@ class HomeViewModel: ViewModel() {
 
     fun getNonAlcoholicDrinks() {
         viewModelScope.launch {
+            _homeUiState.update {
+                it.copy(isDrinksLoading = true)
+            }
+
             when(val drink = homeRepository.getNonAlcoholicDrinks()){
                 is NetworkResult.Loading -> {
                     _homeUiState.update {

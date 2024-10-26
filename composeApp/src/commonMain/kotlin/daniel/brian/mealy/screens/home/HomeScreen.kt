@@ -19,7 +19,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import daniel.brian.mealy.components.CategoriesCard
@@ -48,6 +51,9 @@ import daniel.brian.mealy.components.RandomCard
 import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
+import daniel.brian.mealy.utils.CategoriesCardShimmerEffect
+import daniel.brian.mealy.utils.DrinksCardShimmerEffect
+import daniel.brian.mealy.utils.RandomCardShimmerEffect
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 
@@ -60,9 +66,7 @@ object HomeScreen : Tab {
         LaunchedEffect(homeViewModel){
             homeViewModel.getAllCategories()
             homeViewModel.getNonAlcoholicDrinks()
-            if(homeScreenState.meals.isEmpty()){
-                homeViewModel.getRandomMeal()
-            }
+            homeViewModel.getRandomMeal()
         }
 
         val navigator = LocalNavigator.current
@@ -76,49 +80,126 @@ object HomeScreen : Tab {
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        Text(
-                            text = "Hello, Daniel",
-                            fontSize = 12.sp
-                        )
 
-                        Text(
-                            text = "What would you like to cook or drink today?",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(70.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(Color(0xFFB4D1C4))
-                            .size(60.dp),
-                        contentAlignment = Alignment.Center
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Person,
-                            contentDescription = "Person Profile",
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
+                IntroSection()
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                if (navigator != null) {
+                    CategoriesSection(homeScreenState = homeScreenState, navigator = navigator)
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    RandomSection(homeScreenState = homeScreenState, navigator = navigator)
+
+                    Spacer(modifier = Modifier.height(25.dp))
+
+                    DrinkSection(homeScreenState = homeScreenState, navigator = navigator)
+                }
+
+            }
+        }
+    }
+
+    @Composable
+    fun IntroSection() {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 Text(
-                    text = "Categories",
+                    text = "Hello, Daniel",
+                    fontSize = 12.sp
+                )
+
+                Text(
+                    text = "What would you like to cook or drink today?",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.width(70.dp))
+
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color(0xFFB4D1C4))
+                    .size(60.dp),
+                contentAlignment = Alignment.Center
+
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Person,
+                    contentDescription = "Person Profile",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun CategoriesSection(homeScreenState: HomeScreenState,navigator: Navigator) {
+        Text(
+            text = "Categories",
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        AnimatedVisibility(
+            visible = homeScreenState.isCategoriesLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ){
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(count = 4){
+                    Card(
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier.size(100.dp)
+                    ){
+                        CategoriesCardShimmerEffect(modifier = Modifier)
+                    }
+                }
+            }
+        }
+
+        AnimatedVisibility(visible = homeScreenState.categories.isNotEmpty()){
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(homeScreenState.categories) { category ->
+                    CategoriesCard(
+                        category = category,
+                        onClick = {categoryName ->
+                            navigator.push(CategoryScreen(categoryName))
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun RandomSection(homeScreenState: HomeScreenState, navigator: Navigator) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column {
+                Text(
+                    text = "Recommendation",
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -127,130 +208,96 @@ object HomeScreen : Tab {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 AnimatedVisibility(
-                    visible = homeScreenState.isCategoriesLoading,
+                    visible = homeScreenState.isRandomLoading,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
                     Column(
-                        modifier = Modifier.size(100.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        CircularProgressIndicator()
+                        Card(
+                            shape = RoundedCornerShape(10.dp)
+                        ){
+                            RandomCardShimmerEffect(modifier = Modifier)
+                        }
                     }
                 }
 
-                AnimatedVisibility(visible = homeScreenState.categories.isNotEmpty()){
+                AnimatedVisibility(visible = homeScreenState.meals.isNotEmpty()){
+                    Row {
+                        RandomCard(
+                            meal = homeScreenState.meals[0],
+                            onClick = {mealId ->
+                                navigator.push(DetailsScreen(mealId = mealId))
+                            }
+                        )
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    @Composable
+    fun DrinkSection(homeScreenState: HomeScreenState, navigator: Navigator) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Ordinary Drinks",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                AnimatedVisibility(
+                    visible = homeScreenState.isDrinksLoading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){
                     LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(homeScreenState.categories) { category ->
-                            CategoriesCard(
-                                category = category,
-                                onClick = {categoryName ->
-                                    navigator?.push(CategoryScreen(categoryName))
+                        items(count = 4){
+                            Card(
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.size(100.dp)
+                            ){
+                                DrinksCardShimmerEffect(modifier = Modifier)
+                            }
+                        }
+                    }
+                }
+
+                AnimatedVisibility(visible = homeScreenState.drinks.isNotEmpty()){
+                    LazyRow (
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ){
+                        items(homeScreenState.drinks){ drink ->
+                            DrinksCard(
+                                drink = drink,
+                                onClick = { drinkId ->
+                                    navigator.push(DrinkDetailsScreen(drinkId = drinkId))
                                 }
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Column {
-                        Text(
-                            text = "Recommendation",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedVisibility(
-                            visible = homeScreenState.isRandomLoading,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ){
-                            Column(
-                                modifier = Modifier.size(100.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-
-                        AnimatedVisibility(visible = homeScreenState.meals.isNotEmpty()){
-                            Row {
-                                RandomCard(
-                                    meal = homeScreenState.meals[0],
-                                    onClick = {mealId ->
-                                        navigator?.push(DetailsScreen(mealId = mealId))
-                                    }
-                                )
-                            }
-                        }
-
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(25.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Ordinary Drinks",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedVisibility(
-                            visible = homeScreenState.isDrinksLoading,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ){
-                            Column(
-                                modifier = Modifier.size(100.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-
-                        AnimatedVisibility(visible = homeScreenState.drinks.isNotEmpty()){
-                           LazyRow (
-                               horizontalArrangement = Arrangement.spacedBy(8.dp)
-                           ){
-                               items(homeScreenState.drinks){ drink ->
-                                   DrinksCard(
-                                       drink = drink,
-                                       onClick = { drinkId ->
-                                           navigator?.push(DrinkDetailsScreen(drinkId = drinkId))
-                                       }
-                                   )
-                               }
-                           }
-                        }
-
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(50.dp))
-
             }
         }
+
     }
 
     override val options: TabOptions

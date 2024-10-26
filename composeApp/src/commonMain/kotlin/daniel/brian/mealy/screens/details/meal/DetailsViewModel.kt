@@ -17,12 +17,17 @@ class DetailsViewModel: ViewModel() {
 
     fun getMeals(mealId: Int) {
         viewModelScope.launch {
+            _detailsUiState.update {
+                it.copy(isLoading = true)
+            }
+
             when(val mealDetails = detailsRepository.getMealDetails(mealId)){
                 is NetworkResult.Error -> {
                     _detailsUiState.update {
                         it.copy(
                             errorMessage = mealDetails.message.toString(),
-                            error = true
+                            error = true,
+                            isLoading = false
                         )
                     }
                 }
@@ -35,7 +40,10 @@ class DetailsViewModel: ViewModel() {
 
                 is NetworkResult.Success -> {
                     _detailsUiState.update {
-                        it.copy(meal = mealDetails.data?.firstOrNull())
+                        it.copy(
+                            meal = mealDetails.data?.firstOrNull(),
+                            isLoading = false
+                        )
                     }
                 }
             }

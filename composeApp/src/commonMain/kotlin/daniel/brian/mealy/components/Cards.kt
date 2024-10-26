@@ -3,6 +3,7 @@ package daniel.brian.mealy.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -130,4 +131,40 @@ fun DrinksCard(
        )
    }
 
+}
+
+@Composable
+fun CategoryCard(
+    modifier: Modifier,
+    category: CategoryDetails
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier.size(100.dp),
+            shape = RoundedCornerShape(10.dp),
+            elevation = 10.dp
+        ){
+            KamelImage(
+                resource = asyncPainterResource(category.strMealThumb ?: "No Image"),
+                contentDescription = "category image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            text = category.strMeal?.shortenName() ?: "Null",
+            textAlign = TextAlign.Center
+        )
+
+    }
 }

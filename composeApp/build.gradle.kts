@@ -60,6 +60,7 @@ kotlin {
             //moko
             implementation(libs.moko.mvvm.core)
             implementation(libs.moko.mvvm.compose)
+            implementation(libs.moko.mvvm.livedata)
 
             // for image loading
             implementation(libs.kamel.image)
@@ -68,7 +69,6 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.tabNavigator)
-
             //koin
 //            api(libs.koin.core)
 //            implementation(libs.koin.compose)

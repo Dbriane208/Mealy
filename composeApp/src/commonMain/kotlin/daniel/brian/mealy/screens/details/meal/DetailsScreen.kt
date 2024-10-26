@@ -57,7 +57,7 @@ data class DetailsScreen(
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        val detailsViewModel = getViewModel(Unit, viewModelFactory { DetailsViewModel() })
+        val detailsViewModel = getViewModel(key = mealId, viewModelFactory { DetailsViewModel() })
         val detailsScreenState by detailsViewModel.detailsUiState.collectAsState()
 
         LaunchedEffect(detailsViewModel){

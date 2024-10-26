@@ -93,39 +93,3 @@ fun NumberedInstructions(instructions: String) {
         )
     }
 }
-
-@Composable
-fun CategoryCard(
-    modifier: Modifier,
-    category: CategoryDetails
-){
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card(
-            modifier = Modifier.size(100.dp),
-            shape = RoundedCornerShape(10.dp),
-            elevation = 10.dp
-        ){
-            KamelImage(
-                resource = asyncPainterResource(category.strMealThumb ?: "No Image"),
-                contentDescription = "category image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            text = category.strMeal?.shortenName() ?: "Null",
-            textAlign = TextAlign.Center
-        )
-
-    }
-}

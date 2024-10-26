@@ -9,6 +9,7 @@ data class HomeScreenState (
     val meals: List<Meal> = emptyList(),
     val drinks: List<Drink> = emptyList(),
     val errorMessage: String = "",
+    val randomMeal: Meal? = null,
     val isCategoriesLoading: Boolean = false,
     val isRandomLoading: Boolean = false,
     val isDrinksLoading: Boolean = false,
