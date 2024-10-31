@@ -22,14 +22,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -54,8 +52,6 @@ import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.utils.CategoriesCardShimmerEffect
 import daniel.brian.mealy.utils.DrinksCardShimmerEffect
 import daniel.brian.mealy.utils.RandomCardShimmerEffect
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
 
 object HomeScreen : Tab {
     private val homeViewModel: HomeViewModel by lazy {

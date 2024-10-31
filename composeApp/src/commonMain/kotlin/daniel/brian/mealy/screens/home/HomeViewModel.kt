@@ -28,7 +28,7 @@ class HomeViewModel: ViewModel() {
         getNonAlcoholicDrinks()
     }
 
-    fun getAllCategories() {
+    private fun getAllCategories() {
        viewModelScope.launch {
            _homeUiState.update {
                it.copy(isCategoriesLoading = true)
@@ -67,7 +67,7 @@ class HomeViewModel: ViewModel() {
        }
     }
 
-    fun getRandomMeal() {
+    private fun getRandomMeal() {
         viewModelScope.launch {
             // checking whether we have stored a random meal
             randomSavedState?.let { savedMeal ->
@@ -122,7 +122,7 @@ class HomeViewModel: ViewModel() {
         }
     }
 
-    fun getNonAlcoholicDrinks() {
+    private fun getNonAlcoholicDrinks() {
         viewModelScope.launch {
             _homeUiState.update {
                 it.copy(isDrinksLoading = true)
