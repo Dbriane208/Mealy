@@ -22,6 +22,12 @@ class HomeViewModel: ViewModel() {
         randomSavedState = meal
     }
 
+    init{
+        getAllCategories()
+        getRandomMeal()
+        getNonAlcoholicDrinks()
+    }
+
     fun getAllCategories() {
        viewModelScope.launch {
            _homeUiState.update {

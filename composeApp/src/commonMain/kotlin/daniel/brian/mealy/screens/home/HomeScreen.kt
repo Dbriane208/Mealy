@@ -58,17 +58,13 @@ import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 
 object HomeScreen : Tab {
+    private val homeViewModel: HomeViewModel by lazy {
+        HomeViewModel()
+    }
+
     @Composable
     override fun Content() {
-        val homeViewModel = getViewModel(Unit, viewModelFactory { HomeViewModel() })
         val homeScreenState by homeViewModel.homeUiState.collectAsState()
-
-        LaunchedEffect(homeViewModel){
-            homeViewModel.getAllCategories()
-            homeViewModel.getNonAlcoholicDrinks()
-            homeViewModel.getRandomMeal()
-        }
-
         val navigator = LocalNavigator.current
 
         Box(
@@ -164,7 +160,7 @@ object HomeScreen : Tab {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(count = 4){
+                items(homeScreenState.categories.size){
                     Card(
                         shape = RoundedCornerShape(10.dp),
                         modifier = Modifier.size(100.dp)
@@ -269,7 +265,7 @@ object HomeScreen : Tab {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(count = 4){
+                        items(homeScreenState.drinks.size){
                             Card(
                                 shape = RoundedCornerShape(10.dp),
                                 modifier = Modifier.size(100.dp)
