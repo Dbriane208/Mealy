@@ -78,18 +78,30 @@ fun NumberedInstructions(instructions: String) {
 
         Text(
             text = buildAnnotatedString {
-                val sentences = instructions.split(". ").filter { it.isNotBlank() }
+                val sentences = instructions
+                    .replace(Regex("\\d+\\.\\s*"), "")
+                    .split(".")
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() && it.length > 3 }
+
                 sentences.forEachIndexed { index, sentence ->
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("${index + 1}. ")
                     }
-                    append("$sentence.")
+                    append(sentence.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase()
+                        else it.toString()
+                    })
                     if (index < sentences.size - 1) {
-                        append("\n\n")
+                        append(".\n")
+                    } else {
+                        append(".")
                     }
                 }
             },
             fontSize = 12.sp,
+            lineHeight = 16.sp,
+            modifier = Modifier.padding(top = 4.dp)
         )
     }
 }

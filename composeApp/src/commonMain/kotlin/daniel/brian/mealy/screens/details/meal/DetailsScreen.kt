@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,6 +45,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.IconTextPair
 import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
+import daniel.brian.mealy.utils.DetailsScreenShimmerEffect
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 import io.kamel.image.KamelImage
@@ -52,15 +54,16 @@ import io.kamel.image.asyncPainterResource
 data class DetailsScreen(
     val mealId : Int
 ) : Screen{
+    private val detailsViewModel : DetailsViewModel by lazy {
+        DetailsViewModel()
+    }
 
     @Composable
     override fun Content() {
+        val detailsScreenState by detailsViewModel.detailsUiState.collectAsState()
         val navigator = LocalNavigator.current
 
-        val detailsViewModel = getViewModel(key = mealId, viewModelFactory { DetailsViewModel() })
-        val detailsScreenState by detailsViewModel.detailsUiState.collectAsState()
-
-        LaunchedEffect(detailsViewModel){
+        LaunchedEffect(detailsViewModel) {
             detailsViewModel.getMeals(mealId)
         }
 
@@ -71,23 +74,25 @@ data class DetailsScreen(
         ) {
             when {
                 detailsScreenState.isLoading -> {
-                    Text("Loading...")
+                    DetailsScreenShimmerEffect(modifier = Modifier)
                 }
+
                 detailsScreenState.error -> {
                     Text("Error: ${detailsScreenState.errorMessage}")
                 }
+
                 detailsScreenState.meal != null -> {
                     val meal = detailsScreenState.meal!!
 
                     Box(
                         modifier = Modifier.fillMaxWidth()
-                            .fillMaxHeight(0.25f)
-                    ){
+                            .height(300.dp)
+                    ) {
                         KamelImage(
                             resource = asyncPainterResource(meal.strMealThumb ?: "No Image"),
                             contentDescription = "Meal Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight()
                         )
 
                         Row(
@@ -137,87 +142,119 @@ data class DetailsScreen(
                         }
                     }
 
-                    Box(
+                    Card(
                         modifier = Modifier
-                    ){
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            elevation = 20.dp,
-                            shape = RoundedCornerShape(
-                                topStart = 16.dp,
-                                topEnd = 16.dp,
-                                bottomStart = 0.dp,
-                                bottomEnd = 0.dp
-                            )
-                        ){
+                            .fillMaxWidth()
+                            .height(700.dp)
+                            .offset(y = (-10).dp)
+                        ,
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = 0.dp,
+                            bottomEnd = 0.dp
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(10.dp)
+                        ) {
+
                             Column(
-                                modifier = Modifier.padding(10.dp)
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
+                                TitleText(text = meal.strMeal ?: "Choco Macaroons")
 
-                                Column(
-                                    modifier = Modifier,
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ){
-                                    TitleText(text = meal.strMeal ?: "Choco Macaroons")
+                                Row(
+                                    modifier = Modifier
+                                ) {
+                                    IconTextPair(
+                                        icon = Icons.Outlined.Star,
+                                        contentDescription = "Category",
+                                        text = meal.strCategory ?: "Category null"
+                                    )
 
-                                    Row(
-                                        modifier = Modifier
-                                    ){
-                                        IconTextPair(
-                                            icon = Icons.Outlined.Star,
-                                            contentDescription = "Category",
-                                            text = meal.strCategory ?: "Category null"
-                                        )
+                                    Spacer(modifier = Modifier.width(10.dp))
 
-                                        Spacer(modifier = Modifier.width(10.dp))
+                                    IconTextPair(
+                                        icon = Icons.Outlined.LocationOn,
+                                        contentDescription = "Area",
+                                        text = meal.strArea ?: "Area null"
+                                    )
 
-                                        IconTextPair(
-                                            icon = Icons.Outlined.LocationOn,
-                                            contentDescription = "Area",
-                                            text = meal.strArea ?: "Area null"
-                                        )
+                                    Spacer(modifier = Modifier.width(10.dp))
 
-                                        Spacer(modifier = Modifier.width(10.dp))
-
-                                        IconTextPair(
-                                            icon = Icons.Outlined.Info,
-                                            contentDescription = "Info null",
-                                            text = "More Info"
-                                        )
-                                    }
+                                    IconTextPair(
+                                        icon = Icons.Outlined.Info,
+                                        contentDescription = "Info null",
+                                        text = "More Info"
+                                    )
                                 }
+                            }
 
-                                Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                               NumberedInstructions(meal.strInstructions ?: "Instructions null")
+                            NumberedInstructions(meal.strInstructions ?: "Instructions null")
 
-                                Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                                Column(
-                                    modifier = Modifier,
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ){
-                                    TitleText(text = "Ingredients")
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                TitleText(text = "Ingredients")
 
-                                    val ingredients = listOf(
-                                        Ingredient(meal.strIngredient1 ?: "", meal.strMeasure1 ?: ""),
-                                        Ingredient(meal.strIngredient2 ?: "", meal.strMeasure2 ?: ""),
-                                        Ingredient(meal.strIngredient3 ?: "", meal.strMeasure3 ?: ""),
-                                        Ingredient(meal.strIngredient4 ?: "", meal.strMeasure4 ?: ""),
-                                        Ingredient(meal.strIngredient5 ?: "", meal.strMeasure5 ?: ""),
-                                        Ingredient(meal.strIngredient6 ?: "", meal.strMeasure6 ?: ""),
-                                        Ingredient(meal.strIngredient7 ?: "", meal.strMeasure7 ?: ""),
-                                        Ingredient(meal.strIngredient8 ?: "", meal.strMeasure8 ?: ""),
-                                        Ingredient(meal.strIngredient9 ?: "", meal.strMeasure9 ?: ""),
-                                        Ingredient(meal.strIngredient10 ?: "", meal.strMeasure10 ?: ""),
-                                        Ingredient(meal.strIngredient11 ?: "", meal.strMeasure11 ?: "")
-                                    ).filter { it.name.isNotBlank() && it.measure.isNotBlank() }
+                                val ingredients = listOf(
+                                    Ingredient(
+                                        meal.strIngredient1 ?: "",
+                                        meal.strMeasure1 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient2 ?: "",
+                                        meal.strMeasure2 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient3 ?: "",
+                                        meal.strMeasure3 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient4 ?: "",
+                                        meal.strMeasure4 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient5 ?: "",
+                                        meal.strMeasure5 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient6 ?: "",
+                                        meal.strMeasure6 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient7 ?: "",
+                                        meal.strMeasure7 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient8 ?: "",
+                                        meal.strMeasure8 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient9 ?: "",
+                                        meal.strMeasure9 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient10 ?: "",
+                                        meal.strMeasure10 ?: ""
+                                    ),
+                                    Ingredient(
+                                        meal.strIngredient11 ?: "",
+                                        meal.strMeasure11 ?: ""
+                                    )
+                                ).filter { it.name.isNotBlank() && it.measure.isNotBlank() }
 
-                                    ingredients.forEach { ingredient ->
-                                        IngredientRow(ingredient = ingredient)
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                    }
+                                ingredients.forEach { ingredient ->
+                                    IngredientRow(ingredient = ingredient)
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
                         }
@@ -226,22 +263,6 @@ data class DetailsScreen(
             }
 
         }
-//        Row(
-//            modifier = Modifier
-//        ){
-//            ExtendedFloatingActionButton(
-//                modifier = Modifier.align(Alignment.CenterVertically),
-//                onClick = {},
-//                icon = { Icon(Icons.Filled.PlayArrow, "Play Arrow") },
-//                text = { Text(
-//                    text = "Watch Video",
-//                    color = Color.White
-//                )
-//                },
-//                elevation = FloatingActionButtonDefaults.elevation(10.dp),
-//                backgroundColor = Color(0xFF0C9A61)
-//            )
-//        }
     }
 
     data class Ingredient(

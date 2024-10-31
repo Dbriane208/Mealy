@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -25,16 +24,16 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import daniel.brian.mealy.components.CategoryCard
 import daniel.brian.mealy.utils.DrinksCardShimmerEffect
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
 
 data class CategoryScreen(
     val categoryName: String
 ) : Screen {
+    private val categoryViewModel: CategoryViewModel by lazy {
+        CategoryViewModel()
+    }
+
     @Composable
     override fun Content() {
-        val categoryViewModel =
-            getViewModel(key = categoryName, viewModelFactory { CategoryViewModel() })
         val categoryScreenState by categoryViewModel.categoryListUiState.collectAsState()
 
         LaunchedEffect(categoryName) {

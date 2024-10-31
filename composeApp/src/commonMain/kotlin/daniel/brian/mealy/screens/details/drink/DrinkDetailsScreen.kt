@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +44,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.IconTextPair
 import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
+import daniel.brian.mealy.utils.DetailsScreenShimmerEffect
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 import io.kamel.image.KamelImage
@@ -51,14 +53,16 @@ import io.kamel.image.asyncPainterResource
 data class DrinkDetailsScreen(
     val drinkId: Int
 ) : Screen {
+    private val drinkDetailsViewModel: DrinkDetailsViewModel by lazy {
+        DrinkDetailsViewModel()
+    }
+
     @Composable
     override fun Content() {
+        val drinkDetailsState by drinkDetailsViewModel.drinkUiState.collectAsState()
         val navigator = LocalNavigator.current
 
-        val drinkDetailsViewModel = getViewModel(key = drinkId, viewModelFactory { DrinkDetailsViewModel() })
-        val drinkDetailsState by drinkDetailsViewModel.drinkUiState.collectAsState()
-
-        LaunchedEffect(drinkId){
+        LaunchedEffect(drinkId) {
             drinkDetailsViewModel.getDrinks(drinkId)
         }
 
@@ -69,18 +73,20 @@ data class DrinkDetailsScreen(
         ) {
             when {
                 drinkDetailsState.isLoading -> {
-                    Text("Loading...")
+                    DetailsScreenShimmerEffect(modifier = Modifier)
                 }
+
                 drinkDetailsState.error -> {
                     Text("Error: ${drinkDetailsState.errorMessage}")
                 }
+
                 drinkDetailsState.drink != null -> {
                     val drink = drinkDetailsState.drink!!
 
                     Box(
                         modifier = Modifier.fillMaxWidth()
-                            .fillMaxHeight(0.25f)
-                    ){
+                            .height(300.dp)
+                    ) {
                         KamelImage(
                             resource = asyncPainterResource(drink.strDrinkThumb ?: "No Image"),
                             contentDescription = "Meal Image",
@@ -135,80 +141,84 @@ data class DrinkDetailsScreen(
                         }
                     }
 
-                    Box(
+                    Card(
                         modifier = Modifier
-                    ){
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            elevation = 20.dp,
-                            shape = RoundedCornerShape(
-                                topStart = 16.dp,
-                                topEnd = 16.dp,
-                                bottomStart = 0.dp,
-                                bottomEnd = 0.dp
-                            )
-                        ){
+                            .fillMaxWidth()
+                            .height(700.dp)
+                            .offset(y = (-10).dp),
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = 0.dp,
+                            bottomEnd = 0.dp
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(10.dp)
+                        ) {
+
                             Column(
-                                modifier = Modifier.padding(10.dp)
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
+                                TitleText(text = drink.strDrink ?: "Choco Macaroons")
 
-                                Column(
+                                Row(
                                     modifier = Modifier,
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ){
-                                    TitleText(text = drink.strDrink ?: "Choco Macaroons")
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    IconTextPair(
+                                        icon = Icons.Outlined.Star,
+                                        contentDescription = "Category",
+                                        text = drink.strCategory ?: "Category null"
+                                    )
 
-                                    Row(
-                                        modifier = Modifier,
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ){
-                                        IconTextPair(
-                                            icon = Icons.Outlined.Star,
-                                            contentDescription = "Category",
-                                            text = drink.strCategory ?: "Category null"
-                                        )
+                                    Spacer(modifier = Modifier.width(10.dp))
 
-                                        Spacer(modifier = Modifier.width(10.dp))
-
-                                        IconTextPair(
-                                            icon = Icons.Outlined.Info,
-                                            contentDescription = "Info null",
-                                            text = "More Info"
-                                        )
-                                    }
+                                    IconTextPair(
+                                        icon = Icons.Outlined.Info,
+                                        contentDescription = "Info null",
+                                        text = "More Info"
+                                    )
                                 }
+                            }
 
-                                Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                                NumberedInstructions(drink.strInstructions ?: "Instructions null")
+                            NumberedInstructions(drink.strInstructions ?: "Instructions null")
 
-                                Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                                Column(
-                                    modifier = Modifier,
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ){
-                                    TitleText(text = "Ingredients")
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                TitleText(text = "Ingredients")
 
-                                    val ingredients = listOf(
-                                        Ingredient(drink.strIngredient1 ?: "", drink.strMeasure1 ?: ""),
-                                        Ingredient(drink.strIngredient2 ?: "", drink.strMeasure2 ?: ""),
-                                        Ingredient(drink.strIngredient3 ?: "", drink.strMeasure3 ?: ""),
-                                        Ingredient(drink.strIngredient4 ?: "", drink.strMeasure4 ?: ""),
-                                        Ingredient(drink.strIngredient5 ?: "", drink.strMeasure5 ?: ""),
-                                        Ingredient(drink.strIngredient6 ?: "", drink.strMeasure6 ?: ""),
-                                        Ingredient(drink.strIngredient7 ?: "", drink.strMeasure7 ?: ""),
-                                        Ingredient(drink.strIngredient8 ?: "", drink.strMeasure8 ?: ""),
-                                        Ingredient(drink.strIngredient9 ?: "", drink.strMeasure9 ?: ""),
-                                        Ingredient(drink.strIngredient10 ?: "", drink.strMeasure10 ?: ""),
-                                        Ingredient(drink.strIngredient11 ?: "", drink.strMeasure11 ?: "")
-                                    ).filter { it.name.isNotBlank() && it.measure.isNotBlank() }
+                                val ingredients = listOf(
+                                    Ingredient(drink.strIngredient1 ?: "", drink.strMeasure1 ?: ""),
+                                    Ingredient(drink.strIngredient2 ?: "", drink.strMeasure2 ?: ""),
+                                    Ingredient(drink.strIngredient3 ?: "", drink.strMeasure3 ?: ""),
+                                    Ingredient(drink.strIngredient4 ?: "", drink.strMeasure4 ?: ""),
+                                    Ingredient(drink.strIngredient5 ?: "", drink.strMeasure5 ?: ""),
+                                    Ingredient(drink.strIngredient6 ?: "", drink.strMeasure6 ?: ""),
+                                    Ingredient(drink.strIngredient7 ?: "", drink.strMeasure7 ?: ""),
+                                    Ingredient(drink.strIngredient8 ?: "", drink.strMeasure8 ?: ""),
+                                    Ingredient(drink.strIngredient9 ?: "", drink.strMeasure9 ?: ""),
+                                    Ingredient(
+                                        drink.strIngredient10 ?: "",
+                                        drink.strMeasure10 ?: ""
+                                    ),
+                                    Ingredient(
+                                        drink.strIngredient11 ?: "",
+                                        drink.strMeasure11 ?: ""
+                                    )
+                                ).filter { it.name.isNotBlank() && it.measure.isNotBlank() }
 
-                                    ingredients.forEach { ingredient ->
-                                        IngredientRow(ingredient = ingredient)
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                    }
+                                ingredients.forEach { ingredient ->
+                                    IngredientRow(ingredient = ingredient)
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
                         }
@@ -227,12 +237,12 @@ data class DrinkDetailsScreen(
     @Composable
     fun IngredientRow(
         modifier: Modifier = Modifier,
-        ingredient : Ingredient
+        ingredient: Ingredient
     ) {
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text(
                 modifier = modifier.weight(1f),
                 text = ingredient.name,
