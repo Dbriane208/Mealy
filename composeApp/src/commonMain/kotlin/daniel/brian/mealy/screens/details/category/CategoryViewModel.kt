@@ -9,13 +9,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CategoryViewModel : ViewModel() {
+class CategoryViewModel(categoryName: String) : ViewModel() {
     private val detailsRepository = DetailsRepository()
 
     private val _categoryListUiState = MutableStateFlow(CategoryScreenState())
     val categoryListUiState: StateFlow<CategoryScreenState> = _categoryListUiState.asStateFlow()
 
-    fun getCategoriesListItems(categoryName: String){
+    init {
+        getCategoriesListItems(categoryName = categoryName)
+    }
+
+    private fun getCategoriesListItems(categoryName: String){
         viewModelScope.launch {
 
             _categoryListUiState.update { it.copy(isLoading = true) }

@@ -20,14 +20,5 @@ class KtorClient {
                 }
             )
         }
-
-        install(Logging){
-            level = LogLevel.ALL
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    println(message)
-                }
-            }
-        }
     }
 }

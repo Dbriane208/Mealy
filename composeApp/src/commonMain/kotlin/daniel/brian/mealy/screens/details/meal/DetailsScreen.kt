@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,8 +47,6 @@ import daniel.brian.mealy.components.IconTextPair
 import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
 import daniel.brian.mealy.utils.DetailsScreenShimmerEffect
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -101,43 +100,11 @@ data class DetailsScreen(
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White)
-                                    .size(30.dp)
-                            ) {
-                                IconButton(
-                                    modifier = Modifier,
-                                    onClick = {
-                                        navigator?.pop()
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
+                            CircleIconButton(Icons.AutoMirrored.Filled.ArrowBack, onClick = {
+                                navigator?.pop()
+                            })
 
-
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White)
-                                    .size(30.dp)
-                            ) {
-                                IconButton(
-                                    modifier = Modifier,
-                                    onClick = {},
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = null,
-                                    )
-                                }
-
-                            }
+                            CircleIconButton(Icons.Filled.Favorite, onClick = {})
 
                         }
                     }
@@ -145,7 +112,7 @@ data class DetailsScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(700.dp)
+                            .fillMaxHeight()
                             .offset(y = (-10).dp)
                         ,
                         elevation = 20.dp,
@@ -157,11 +124,11 @@ data class DetailsScreen(
                         )
                     ) {
                         Column(
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(10.dp).fillMaxHeight()
                         ) {
 
                             Column(
-                                modifier = Modifier,
+                                modifier = Modifier.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 TitleText(text = meal.strMeal ?: "Choco Macaroons")
@@ -200,7 +167,7 @@ data class DetailsScreen(
                             Spacer(modifier = Modifier.height(10.dp))
 
                             Column(
-                                modifier = Modifier,
+                                modifier = Modifier.fillMaxHeight(),
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 TitleText(text = "Ingredients")
@@ -290,6 +257,23 @@ data class DetailsScreen(
                 text = ingredient.measure,
                 fontSize = 14.sp
             )
+        }
+    }
+
+    @Composable
+    fun CircleIconButton(icon: ImageVector, onClick: () -> Unit) {
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color.White)
+                .size(30.dp)
+        ) {
+            IconButton(onClick = onClick) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

@@ -136,14 +136,17 @@ fun DrinksCard(
 @Composable
 fun CategoryCard(
     modifier: Modifier,
-    category: CategoryDetails
+    category: CategoryDetails,
+    onClick: (Int) -> Unit
 ){
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
-            modifier = Modifier.size(100.dp),
+            modifier = Modifier
+                .size(100.dp)
+                .clickable { category.idMeal?.toIntOrNull()?.let { onClick(it) } },
             shape = RoundedCornerShape(10.dp),
             elevation = 10.dp
         ){
