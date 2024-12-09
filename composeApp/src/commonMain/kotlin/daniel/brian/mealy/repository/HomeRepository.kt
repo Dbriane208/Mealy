@@ -45,7 +45,6 @@ class HomeRepository {
                     parameter("a","Non_Alcoholic")
                 }
                 .body()
-            Napier.d("Drink data:${drink.drinks}")
             NetworkResult.Success(drink.drinks)
         }catch (e: Exception) {
             NetworkResult.Error(e.message.toString())

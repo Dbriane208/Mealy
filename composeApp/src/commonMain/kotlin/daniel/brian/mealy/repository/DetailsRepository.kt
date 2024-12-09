@@ -51,7 +51,6 @@ class DetailsRepository {
                     parameter("c",categoryName)
                 }
                 .body()
-            Napier.d("CategoriesList: ${categoriesList.meals}")
             NetworkResult.Success(categoriesList.meals)
         }catch (e: Exception){
             NetworkResult.Error(e.message.toString())

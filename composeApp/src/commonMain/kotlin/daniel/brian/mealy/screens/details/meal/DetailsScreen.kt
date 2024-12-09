@@ -85,7 +85,7 @@ data class DetailsScreen(
 
                     Box(
                         modifier = Modifier.fillMaxWidth()
-                            .height(300.dp)
+                            .height(370.dp)
                     ) {
                         KamelImage(
                             resource = asyncPainterResource(meal.strMealThumb ?: "No Image"),
