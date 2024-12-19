@@ -46,6 +46,12 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import daniel.brian.mealy.components.CategoriesCard
 import daniel.brian.mealy.components.DrinksCard
 import daniel.brian.mealy.components.RandomCard
+import daniel.brian.mealy.database.DrinkDao
+import daniel.brian.mealy.database.DrinkDaoImpl
+import daniel.brian.mealy.database.MealDao
+import daniel.brian.mealy.database.MealDaoImpl
+import daniel.brian.mealy.database.MealDatabase
+import daniel.brian.mealy.screens.bookmark.BookmarkScreen
 import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
@@ -57,6 +63,8 @@ object HomeScreen : Tab {
     private val homeViewModel: HomeViewModel by lazy {
         HomeViewModel()
     }
+    private  val mealDao = MealDaoImpl()
+    private val drinkDao = DrinkDaoImpl()
 
     @Composable
     override fun Content() {
@@ -175,7 +183,7 @@ object HomeScreen : Tab {
                     CategoriesCard(
                         category = category,
                         onClick = {categoryName ->
-                            navigator.push(CategoryScreen(categoryName))
+                            navigator.push(CategoryScreen(categoryName, mealDao))
                         }
                     )
                 }
@@ -224,7 +232,7 @@ object HomeScreen : Tab {
                         RandomCard(
                             meal = homeScreenState.meals[0],
                             onClick = {mealId ->
-                                navigator.push(DetailsScreen(mealId = mealId))
+                                navigator.push(DetailsScreen(mealId = mealId, mealDao))
                             }
                         )
                     }
@@ -280,7 +288,7 @@ object HomeScreen : Tab {
                             DrinksCard(
                                 drink = drink,
                                 onClick = { drinkId ->
-                                    navigator.push(DrinkDetailsScreen(drinkId = drinkId))
+                                    navigator.push(DrinkDetailsScreen(drinkId = drinkId, drinkDao))
                                 }
                             )
                         }

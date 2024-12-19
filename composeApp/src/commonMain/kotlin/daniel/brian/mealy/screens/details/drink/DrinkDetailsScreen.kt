@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,23 +47,28 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.IconTextPair
 import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
+import daniel.brian.mealy.database.DrinkDao
 import daniel.brian.mealy.utils.DetailsScreenShimmerEffect
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
+import io.github.aakira.napier.Napier
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 data class DrinkDetailsScreen(
-    val drinkId: Int
+    val drinkId: Int,
+    val drinkDao: DrinkDao
 ) : Screen {
-    private val drinkDetailsViewModel: DrinkDetailsViewModel by lazy {
-        DrinkDetailsViewModel()
-    }
 
     @Composable
     override fun Content() {
+        val drinkDetailsViewModel = getViewModel(Unit, viewModelFactory { DrinkDetailsViewModel() })
         val drinkDetailsState by drinkDetailsViewModel.drinkUiState.collectAsState()
+        var isClicked by remember { mutableStateOf(false) }
         val navigator = LocalNavigator.current
+        val scope = rememberCoroutineScope()
 
         LaunchedEffect(drinkId) {
             drinkDetailsViewModel.getDrinks(drinkId)
@@ -128,11 +136,29 @@ data class DrinkDetailsScreen(
                             ) {
                                 IconButton(
                                     modifier = Modifier,
-                                    onClick = {},
+                                    onClick = {
+                                        isClicked = !isClicked
+                                        scope.launch {
+                                            try {
+                                                drinkDetailsState.drink?.let { drink ->
+                                                    drinkDao.upsertDrink(drink)
+                                                    val drinks = drinkDao.getAllDrinks().first()
+                                                    if (drinks.contains(drink)) {
+                                                        Napier.d("Drink upsert successful in database: $drink")
+                                                    } else {
+                                                        Napier.e("Meal upsert failed")
+                                                    }
+                                                }
+                                            } catch (e: Exception) {
+                                                Napier.e("Drink Exception $e")
+                                            }
+                                        }
+                                    },
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Favorite,
                                         contentDescription = null,
+                                        tint = if (isClicked) Color.Red else Color.Gray
                                     )
                                 }
 

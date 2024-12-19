@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import daniel.brian.mealy.model.remote.Category
 import daniel.brian.mealy.model.remote.CategoryDetails
 import daniel.brian.mealy.model.remote.Drink
+import daniel.brian.mealy.model.remote.DrinkDetails
 import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.utils.shortenName
 import daniel.brian.mealy.utils.shortenNameLength
@@ -166,6 +167,84 @@ fun CategoryCard(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
             text = category.strMeal?.shortenName() ?: "Null",
+            textAlign = TextAlign.Center
+        )
+
+    }
+}
+
+@Composable
+fun SavedMealCard(
+    modifier: Modifier,
+    meal: Meal,
+    onClick: (Int) -> Unit
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier
+                .size(100.dp)
+                .clickable { meal.idMeal.toIntOrNull()?.let { onClick(it) } },
+            shape = RoundedCornerShape(10.dp),
+            elevation = 10.dp
+        ){
+            KamelImage(
+                resource = asyncPainterResource(meal.strMealThumb ?: "No Image"),
+                contentDescription = "category image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            text = meal.strMeal?.shortenName() ?: "Null",
+            textAlign = TextAlign.Center
+        )
+
+    }
+}
+
+@Composable
+fun SavedDrinkCard(
+    modifier: Modifier,
+    drink: DrinkDetails,
+    onClick: (Int) -> Unit
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier
+                .size(100.dp)
+                .clickable { drink.idDrink.toIntOrNull()?.let { onClick(it) } },
+            shape = RoundedCornerShape(10.dp),
+            elevation = 10.dp
+        ){
+            KamelImage(
+                resource = asyncPainterResource(drink.strDrinkThumb ?: "No Image"),
+                contentDescription = "category image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            text = drink.strDrink?.shortenName() ?: "Null",
             textAlign = TextAlign.Center
         )
 

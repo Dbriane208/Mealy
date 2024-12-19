@@ -31,11 +31,14 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.CategoryCard
+import daniel.brian.mealy.database.MealDao
+import daniel.brian.mealy.database.MealDatabase
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.utils.DrinksCardShimmerEffect
 
 data class CategoryScreen(
-    val categoryName: String
+    val categoryName: String,
+    val mealDao: MealDao
 ) : Screen {
     private val categoryViewModel: CategoryViewModel by lazy {
         CategoryViewModel(categoryName = categoryName)
@@ -108,7 +111,7 @@ data class CategoryScreen(
                             CategoryCard(
                                 category = category,
                                 onClick = { meal ->
-                                    navigator?.push(DetailsScreen(meal))
+                                    navigator?.push(DetailsScreen(meal,mealDao))
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             )

@@ -9,16 +9,14 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
+import daniel.brian.mealy.database.DrinkDao
+import daniel.brian.mealy.database.MealDao
 import daniel.brian.mealy.screens.bookmark.BookmarkScreen
 import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
@@ -28,7 +26,7 @@ import daniel.brian.mealy.screens.profile.ProfileScreen
 import daniel.brian.mealy.screens.search.SearchScreen
 
 @Composable
-fun App() {
+fun App(mealDao: MealDao, drinkDao: DrinkDao) {
     MaterialTheme {
         Navigator(MainScreen) { navigator ->
             Scaffold(
@@ -51,7 +49,7 @@ fun App() {
                 }
             ) { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues)){
-                    CurrentScreen(navigator)
+                    CurrentScreen(navigator,mealDao,drinkDao)
                 }
             }
         }
@@ -94,12 +92,12 @@ fun RowScope.TabNavigationItem(tab: Tab, navigator: Navigator) {
 }
 
 @Composable
-fun CurrentScreen(navigator: Navigator) {
+fun CurrentScreen(navigator: Navigator, mealDao: MealDao, drinkDao: DrinkDao) {
     when (val currentScreen = navigator.lastItem) {
         is MainScreen -> currentScreen.currentTab.Content()
-        is DetailsScreen -> DetailsScreen(currentScreen.mealId).Content()
-        is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId).Content()
-        is CategoryScreen -> CategoryScreen(currentScreen.categoryName).Content()
+        is DetailsScreen -> DetailsScreen(currentScreen.mealId,mealDao).Content()
+        is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId,drinkDao).Content()
+        is CategoryScreen -> CategoryScreen(currentScreen.categoryName,mealDao).Content()
         is ProfileScreen -> ProfileScreen.Content()
         is BookmarkScreen -> BookmarkScreen.Content()
         is SearchScreen -> SearchScreen.Content()

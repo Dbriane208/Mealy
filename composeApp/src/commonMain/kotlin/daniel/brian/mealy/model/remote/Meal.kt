@@ -1,10 +1,15 @@
 package daniel.brian.mealy.model.remote
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
+
 @Serializable
+@Entity(tableName = "MealTable")
 data class Meal(
-    val idMeal: String?,
+    @PrimaryKey
+    val idMeal: String,
     val strMeal: String?,
     val strCategory: String?,
     val strArea: String?,

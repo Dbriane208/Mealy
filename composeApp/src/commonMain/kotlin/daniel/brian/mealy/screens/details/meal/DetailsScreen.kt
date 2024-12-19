@@ -32,6 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,23 +50,31 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import daniel.brian.mealy.components.IconTextPair
 import daniel.brian.mealy.components.NumberedInstructions
 import daniel.brian.mealy.components.TitleText
+import daniel.brian.mealy.database.MealDao
+import daniel.brian.mealy.model.remote.Meal
 import daniel.brian.mealy.utils.DetailsScreenShimmerEffect
+import dev.icerock.moko.mvvm.compose.getViewModel
+import dev.icerock.moko.mvvm.compose.viewModelFactory
+import io.github.aakira.napier.Napier
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 data class DetailsScreen(
-    val mealId : Int
+    val mealId : Int,
+    val mealDao: MealDao
 ) : Screen{
-    private val detailsViewModel : DetailsViewModel by lazy {
-        DetailsViewModel()
-    }
 
     @Composable
     override fun Content() {
+        val detailsViewModel = getViewModel(Unit, viewModelFactory { DetailsViewModel() })
         val detailsScreenState by detailsViewModel.detailsUiState.collectAsState()
         val navigator = LocalNavigator.current
+        var isClicked by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
 
-        LaunchedEffect(detailsViewModel) {
+        LaunchedEffect(mealId) {
             detailsViewModel.getMeals(mealId)
         }
 
@@ -100,11 +112,28 @@ data class DetailsScreen(
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            CircleIconButton(Icons.AutoMirrored.Filled.ArrowBack, onClick = {
+                            CircleIconButton(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                tint = Color.Black,
+                                onClick = {
                                 navigator?.pop()
                             })
 
-                            CircleIconButton(Icons.Filled.Favorite, onClick = {})
+                            CircleIconButton(
+                                Icons.Filled.Favorite,
+                                tint = if (isClicked) Color.Red else Color.Gray,
+                                onClick = {
+                                    isClicked = !isClicked
+                                    scope.launch {
+                                    try {
+                                        detailsScreenState.meal?.let { meal ->
+                                            mealDao.upsert(meal)
+                                        }
+                                    } catch (e: Exception) {
+                                        Napier.e("Meal Exception $e ")
+                                    }
+                              }
+                            })
 
                         }
                     }
@@ -261,7 +290,7 @@ data class DetailsScreen(
     }
 
     @Composable
-    fun CircleIconButton(icon: ImageVector, onClick: () -> Unit) {
+    fun CircleIconButton(icon: ImageVector, tint: Color, onClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .clip(CircleShape)
@@ -271,9 +300,11 @@ data class DetailsScreen(
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = icon,
+                    tint = tint,
                     contentDescription = null,
                 )
             }
         }
     }
+
 }
