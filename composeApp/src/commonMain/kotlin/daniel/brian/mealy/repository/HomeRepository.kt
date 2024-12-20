@@ -21,7 +21,6 @@ class HomeRepository {
             val response: CategoryListResponse = client.httpClient
                 .get("https://www.themealdb.com/api/json/v1/1/categories.php")
                 .body()
-            Napier.d("Fetched data: ${response.categories}")
             NetworkResult.Success(response.categories)
         } catch (e: Exception) {
             NetworkResult.Error(e.message.toString())
@@ -32,7 +31,6 @@ class HomeRepository {
             val meal: MealListResponse = client.httpClient
                 .get("https://www.themealdb.com/api/json/v1/1/random.php")
                 .body()
-            Napier.d("Meal:${meal.meals}")
             NetworkResult.Success(meal.meals)
         }catch (e: Exception){
             NetworkResult.Error(e.message.toString())
@@ -46,6 +44,18 @@ class HomeRepository {
                 }
                 .body()
             NetworkResult.Success(drink.drinks)
+        }catch (e: Exception) {
+            NetworkResult.Error(e.message.toString())
+        }
+
+    suspend fun searchMeal(mealName: String): NetworkResult<List<Meal>> =
+        try {
+            val meal: MealListResponse = client.httpClient
+                .get("https://www.themealdb.com/api/json/v1/1/search.php"){
+                    parameter("s",mealName)
+                }
+                .body()
+            NetworkResult.Success(meal.meals)
         }catch (e: Exception) {
             NetworkResult.Error(e.message.toString())
         }
