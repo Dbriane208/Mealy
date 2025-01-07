@@ -1,12 +1,11 @@
-package daniel.brian.mealy.screens.profile
+package daniel.brian.mealy.screens.mealai
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -15,7 +14,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 
-object ProfileScreen : Tab {
+object MealAIScreen : Tab {
 
     @Composable
     override fun Content() {
@@ -23,14 +22,14 @@ object ProfileScreen : Tab {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
-            Text("Profile Screen")
+            Text("Meal AI Screen")
         }
     }
 
     override val options: TabOptions
         @Composable
         get() {
-            val icon = rememberVectorPainter(Icons.Rounded.Person)
+            val icon = rememberVectorPainter(Icons.Rounded.Star)
 
             return remember {
                 TabOptions(

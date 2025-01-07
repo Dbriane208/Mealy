@@ -116,7 +116,6 @@ object BookmarkScreen : Tab {
                     }
                 }
 
-                // Content state
                 AnimatedVisibility(visible = !bookMarkScreenState.isLoading) {
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(100.dp),
@@ -126,7 +125,6 @@ object BookmarkScreen : Tab {
                             .fillMaxSize()
                             .padding(horizontal = 5.dp),
                     ) {
-                        // Meals section
                         if (meals.isNotEmpty()) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 Text(
@@ -173,7 +171,6 @@ object BookmarkScreen : Tab {
                             }
                         }
 
-                        // Drinks section
                         if (drinks.isNotEmpty()) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 Text(

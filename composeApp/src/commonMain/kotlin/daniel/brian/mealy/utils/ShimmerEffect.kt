@@ -173,7 +173,6 @@ fun DetailsScreenShimmerEffect(modifier: Modifier = Modifier) {
                     .shimmerEffect()
             )
 
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -293,4 +292,40 @@ fun DetailsScreenShimmerEffect(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+
+@Composable
+fun SearchCardShimmerEffect(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Card(
+            modifier = modifier
+                .size(150.dp)
+                .shimmerEffect(),
+            elevation = 10.dp,
+            shape = RoundedCornerShape(10.dp)
+        ){
+            KamelImage(
+                resource = asyncPainterResource(""),
+                contentDescription = "category image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .shimmerEffect()
+            )
+        }
+
+        Text(
+            text = "No Meal with that Name. Try Again!!",
+            modifier = Modifier
+                .padding(vertical = 4.dp),
+            textAlign = TextAlign.Center
+        )
+    }
+
 }

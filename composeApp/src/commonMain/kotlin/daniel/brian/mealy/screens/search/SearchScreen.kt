@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,6 +48,7 @@ import daniel.brian.mealy.components.SavedMealCard
 import daniel.brian.mealy.database.MealDaoImpl
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.utils.DrinksCardShimmerEffect
+import daniel.brian.mealy.utils.SearchCardShimmerEffect
 
 object SearchScreen : Tab {
     private val searchScreenViewModel: SearchScreenViewModel by lazy {
@@ -143,11 +145,7 @@ object SearchScreen : Tab {
                     }
 
                     searchScreenState.error -> {
-                        Text(
-                            text = "Error: ${searchScreenState.errorMessage}",
-                            modifier = Modifier.align(Alignment.Center),
-                            color = Color.Red
-                        )
+                        SearchCardShimmerEffect(modifier = Modifier)
                     }
 
                     else -> {
