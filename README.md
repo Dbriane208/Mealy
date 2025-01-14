@@ -6,7 +6,6 @@ A Compose Multiplatform app built with Jetpack Compose to run on Android and Des
 -  ✅Displaying different types of food in various categories
 -  ✅Adding different kinds of food and drinks to the favorite section
 -  ✅Deleting of items from the favorite and cart section
--  ❌Meal recommendation using Gemini[ongoing..]
 
 # Tech Stack
 
