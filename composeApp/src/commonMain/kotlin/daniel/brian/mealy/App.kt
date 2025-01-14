@@ -22,7 +22,6 @@ import daniel.brian.mealy.screens.details.category.CategoryScreen
 import daniel.brian.mealy.screens.details.drink.DrinkDetailsScreen
 import daniel.brian.mealy.screens.details.meal.DetailsScreen
 import daniel.brian.mealy.screens.home.HomeScreen
-import daniel.brian.mealy.screens.mealai.MealAIScreen
 import daniel.brian.mealy.screens.search.SearchScreen
 
 @Composable
@@ -31,8 +30,7 @@ fun App(mealDao: MealDao, drinkDao: DrinkDao) {
         Navigator(MainScreen) { navigator ->
             Scaffold(
                 bottomBar = {
-                    // showing navigation bar only on main screens
-                    val tabScreens = setOf(MainScreen,BookmarkScreen,SearchScreen,MealAIScreen)
+                    val tabScreens = setOf(MainScreen,BookmarkScreen,SearchScreen)
 
                     if (navigator.lastItem in tabScreens) {
                         BottomNavigation(
@@ -43,7 +41,6 @@ fun App(mealDao: MealDao, drinkDao: DrinkDao) {
                             TabNavigationItem(HomeScreen, navigator)
                             TabNavigationItem(BookmarkScreen, navigator)
                             TabNavigationItem(SearchScreen, navigator)
-                            TabNavigationItem(MealAIScreen, navigator)
                         }
                     }
                 }
@@ -62,7 +59,6 @@ fun RowScope.TabNavigationItem(tab: Tab, navigator: Navigator) {
     val currentScreen = navigator.lastItem as? MainScreen
     val selected = when (navigator.lastItem) {
         is MainScreen -> currentScreen?.currentTab == tab
-        is MealAIScreen -> tab is MealAIScreen
         is BookmarkScreen -> tab is BookmarkScreen
         is SearchScreen -> tab is SearchScreen
         is HomeScreen -> tab is HomeScreen
@@ -73,7 +69,6 @@ fun RowScope.TabNavigationItem(tab: Tab, navigator: Navigator) {
         selected = selected,
         onClick = {
             when (tab) {
-                is MealAIScreen -> navigator.push(MealAIScreen)
                 is BookmarkScreen -> navigator.push(BookmarkScreen)
                 is SearchScreen -> navigator.push(SearchScreen)
                 is HomeScreen -> navigator.push(MainScreen)
@@ -98,7 +93,6 @@ fun CurrentScreen(navigator: Navigator, mealDao: MealDao, drinkDao: DrinkDao) {
         is DetailsScreen -> DetailsScreen(currentScreen.mealId,mealDao).Content()
         is DrinkDetailsScreen -> DrinkDetailsScreen(currentScreen.drinkId,drinkDao).Content()
         is CategoryScreen -> CategoryScreen(currentScreen.categoryName,mealDao).Content()
-        is MealAIScreen -> MealAIScreen.Content()
         is BookmarkScreen -> BookmarkScreen.Content()
         is SearchScreen -> SearchScreen.Content()
     }

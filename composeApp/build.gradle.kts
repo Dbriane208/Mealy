@@ -58,6 +58,9 @@ kotlin {
             //ktor
             implementation(libs.bundles.ktor)
 
+            //genai
+            implementation(libs.generativeai)
+
             //moko
             implementation(libs.moko.mvvm.core)
             implementation(libs.moko.mvvm.compose)

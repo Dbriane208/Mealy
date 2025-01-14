@@ -18,7 +18,11 @@ class KtorClient {
                     useAlternativeNames = false
                     coerceInputValues = true
                 }
+
             )
+        }
+        install(Logging) {
+            level = LogLevel.ALL
         }
     }
 }

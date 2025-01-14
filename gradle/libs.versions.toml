@@ -12,6 +12,7 @@ androidx-lifecycle = "2.8.3"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-plugin = "1.7.0"
+generativeai = "0.9.0"
 junit = "4.13.2"
 kotlin = "2.0.21"
 kotlinx-coroutines = "1.8.1"
@@ -30,6 +31,7 @@ annotationJvm = "1.9.1"
 sqliteBundledJvm = "2.5.0-alpha12"
 
 [libraries]
+generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
