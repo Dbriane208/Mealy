@@ -26,7 +26,7 @@ A Compose Multiplatform app built with Jetpack Compose to run on Android and Des
 - Open the project in Android Studio.
   
     - <b> Android</b>: To run the application on android device/emulator. Open project in Android Studio and run imported android run configuration
-    - <b>Desktop</b>: Run the desktop application: <b>./gradlew run</b>
+    - <b>Desktop</b>: Run the desktop application in the terminal: <b>./gradlew run</b>
 
 
 # Project Images
